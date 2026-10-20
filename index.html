@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https:; font-src https: data:; img-src https: http: data: blob:; connect-src https://ffx.qd.je; object-src 'none'; base-uri 'none'; frame-src 'none'">
+    <title>Hosting Dashboard - iOS UI</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    
+    <style>
+        :root {
+            /* Claymorphism Colors */
+            --bg-color: #ebf0f7;
+            --shadow-light: #ffffff;
+            --shadow-dark: #c3cddb;
+            --text-main: #1c1c1e;
+            --text-muted: #8e8e93;
+            --primary: #007aff; /* iOS Blue */
+            --danger: #ff3b30;  /* iOS Red */
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            padding-top: 100px;
+            align-items: flex-start;
+        }
+
+        /* Clay Container */
+        .modal-content {
+            background: var(--bg-color);
+            border-radius: 35px;
+            padding: 40px;
+            width: 90%;
+            max-width: 440px;
+            box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            z-index: 10;
+        }
+
+        .dashboard-container {
+            width: 100%;
+            max-width: 800px;
+            padding: 30px;
+        }
+
+        h2, h3, h4 {
+            margin-top: 0;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+
+        .header-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 70px;
+            height: 70px;
+            border-radius: 25px;
+            background: var(--bg-color);
+            box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
+            margin-bottom: 20px;
+            font-size: 32px;
+            color: var(--primary);
+        }
+
+        /* Clay Inputs & Textarea */
+        .animated-field {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .animated-field i.icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 20px;
+            z-index: 2;
+        }
+
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 16px 20px 16px 50px;
+            background: var(--bg-color);
+            border: none;
+            border-radius: 22px;
+            color: var(--text-main);
+            font-size: 15px;
+            font-weight: 500;
+            box-sizing: border-box;
+            box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .clay-textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 20px;
+            background: var(--bg-color);
+            border: none;
+            border-radius: 25px;
+            color: var(--text-main);
+            font-size: 14px;
+            font-family: monospace;
+            box-sizing: border-box;
+            box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
+            outline: none;
+            resize: vertical;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        input:focus, .clay-textarea:focus {
+            box-shadow: inset 8px 8px 16px var(--shadow-dark), inset -8px -8px 16px var(--shadow-light), 0 0 0 3px rgba(0, 122, 255, 0.2);
+        }
+
+        /* Tabs for File vs Code */
+        .tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 20px;
+            border: none;
+            background: var(--bg-color);
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        .tab-btn:hover {
+            color: var(--primary);
+        }
+        .tab-btn.active {
+            color: var(--primary);
+            box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light);
+        }
+
+        /* Clay Buttons */
+        .auth-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--bg-color);
+            color: var(--primary);
+            border: none;
+            border-radius: 22px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .auth-btn:hover {
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            color: #0056b3;
+        }
+
+        .auth-btn:active {
+            box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
+            transform: scale(0.98);
+        }
+
+        .auth-btn.danger {
+            color: var(--danger);
+        }
+
+        /* Panels & Dashboard */
+        .panel {
+            background: var(--bg-color);
+            border-radius: 35px;
+            padding: 30px;
+            box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
+            margin-bottom: 25px;
+            border: 2px solid rgba(255,255,255,0.4);
+        }
+
+        .project-item {
+            background: var(--bg-color);
+            border-radius: 25px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light);
+        }
+
+        .project-info h4 { margin: 0 0 5px 0; font-size: 17px; }
+        .project-info p { margin: 0; font-size: 13px; color: var(--primary); }
+        .project-info a { text-decoration: none; color: inherit; }
+
+        .project-actions { display: flex; gap: 12px; }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--primary);
+            background: var(--bg-color);
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .icon-btn:active {
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        }
+        
+        .icon-btn.danger { color: var(--danger); }
+
+        /* Profile Bar (Top) */
+        .pf-bar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-color);
+            padding: 12px 25px;
+            border-radius: 30px;
+            box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 50;
+            border: 2px solid rgba(255,255,255,0.4);
+        }
+
+        .pf-bar-avatar {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: var(--bg-color);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            padding: 4px;
+        }
+        .pf-bar-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        
+        .pf-bar-text h2 { margin: 0; font-size: 16px; color: var(--text-main); }
+        .pf-bar-text span { font-size: 12px; color: var(--text-muted); }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(235, 240, 247, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        
+        .upload-zone {
+            border-radius: 25px;
+            padding: 40px 20px;
+            text-align: center;
+            background: var(--bg-color);
+            box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
+            position: relative;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .upload-zone input[type="file"] {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;
+        }
+        .upload-zone i { font-size: 40px; color: var(--primary); margin-bottom: 10px; display: block; }
+        .upload-zone .upload-text { font-weight: 600; color: var(--text-main); margin: 0; }
+
+        #toast-container {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            display: flex; flex-direction: column; gap: 10px; z-index: 10000;
+        }
+        .toast {
+            background: var(--bg-color);
+            color: var(--text-main);
+            padding: 15px 25px;
+            border-radius: 20px;
+            box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
+            font-size: 14px; font-weight: 600;
+            display: flex; align-items: center; gap: 10px;
+            transform: translateY(100px); opacity: 0;
+            transition: all 0.4s cubic-bezier(0.2, 0, 0, 1);
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.error i { color: var(--danger); }
+        .toast.success i { color: #34c759; }
+
+        /* Loader */
+        #loader {
+            position: fixed; inset: 0;
+            background: var(--bg-color);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 9999;
+        }
+        .spinner {
+            width: 50px; height: 50px;
+            border: 5px solid var(--shadow-dark);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px auto;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div id="toast-container"></div>
+    
+    <div id="loader">
+        <div style="text-align: center;">
+            <div class="spinner"></div>
+            <div id="loader-text" style="font-size: 16px; color: var(--text-main); font-weight: 600;">Loading Workspace...</div>
+        </div>
+    </div>
+
+    <!-- Header Bar -->
+    <div class="pf-bar" id="pf-bar">
+        <div class="pf-bar-avatar">
+            <img src="https://i.postimg.cc/mDsYhTfq/file-000000004ce88211aeb6ad425a8676b1.png" alt="Profile">
+        </div>
+        <div class="pf-bar-text">
+            <h2>Tasin <i class="ti ti-rosette-discount-check-filled" style="color:var(--primary); font-size:18px;"></i></h2>
+            <span>Hosting Dashboard</span>
+        </div>
+    </div>
+    
+    <!-- Dashboard -->
+    <div class="dashboard-container" id="dashboard-view" style="display: none;">
+        <div class="panel">
+            <h3><i class="ti ti-cloud-upload"></i> Deploy New Project</h3>
+            <form id="upload-form" onsubmit="handleUpload(event)">
+                <div class="animated-field">
+                    <i class="ti ti-link icon"></i>
+                    <input type="text" id="up-name" required placeholder="Enter your site name" maxlength="40" autocomplete="off">
+                </div>
+                
+                <!-- Tab Buttons -->
+                <div class="tabs">
+                    <button type="button" class="tab-btn active" id="btn-deploy-file" onclick="setDeployMode('file')"><i class="ti ti-file-upload"></i> Upload File</button>
+                    <button type="button" class="tab-btn" id="btn-deploy-code" onclick="setDeployMode('code')"><i class="ti ti-code"></i> Paste Code</button>
+                </div>
+
+                <!-- File Upload Zone -->
+                <div id="deploy-file-zone">
+                    <div class="upload-zone" id="deploy-upload-zone">
+                        <i class="ti ti-file-code" id="deploy-icon"></i>
+                        <p class="upload-text" id="deploy-text">Tap to select HTML File</p>
+                        <input type="file" id="up-file" accept=".html,.htm" onchange="updateUploadUI(this, 'deploy-text', 'deploy-icon')">
+                    </div>
+                </div>
+
+                <!-- Paste Code Zone -->
+                <div id="deploy-code-zone" style="display: none;">
+                    <textarea id="up-code" class="clay-textarea" placeholder="Paste your HTML code here...
+Example:
+<!DOCTYPE html>
+<html>
+<body>
+  <h1>Hello World</h1>
+</body>
+</html>"></textarea>
+                </div>
+                
+                <button type="submit" id="up-btn" class="auth-btn" style="background: var(--primary); color: white;">
+                    <i class="ti ti-rocket"></i> Deploy Project
+                </button>
+            </form>
+        </div>
+        
+        <div class="panel">
+            <h3><i class="ti ti-folder"></i> My Projects (<span id="proj-count">0</span>)</h3>
+            <div id="projects-list">
+                <!-- Projects injected via JS -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Delete Modal -->
+    <div class="modal-overlay" id="delete-modal">
+        <div class="modal-content" style="text-align: center;">
+            <div class="header-icon" style="color: var(--danger);"><i class="ti ti-alert-triangle"></i></div>
+            <h3>Delete Project?</h3>
+            <p style="color: var(--text-muted); margin-bottom: 25px;">Are you sure you want to delete <span id="delete-project-name-display" style="font-weight: 600; color:var(--text-main);"></span>?</p>
+            
+            <div style="display: flex; gap: 15px;">
+                <button onclick="closeDeleteModal()" class="auth-btn" style="color: var(--text-main);">Cancel</button>
+                <button id="confirm-delete-btn" onclick="executeDeleteProject()" class="auth-btn danger">Delete</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Modal -->
+    <div class="modal-overlay" id="edit-modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 20px;"><i class="ti ti-pencil"></i> Edit: <span id="edit-project-name-display" style="color:var(--primary);"></span></h3>
+            
+            <div style="margin-bottom: 25px;">
+                <form id="rename-form" onsubmit="handleRename(event)" style="display:flex; gap:10px;">
+                    <input type="hidden" id="rename-old-name">
+                    <input type="text" id="rename-new-name" required style="padding-left: 20px;">
+                    <button type="submit" id="rename-btn" class="auth-btn" style="width:auto; padding: 10px 20px;"><i class="ti ti-check"></i></button>
+                </form>
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <form id="update-form" onsubmit="handleUpdateProject(event)">
+                    <input type="hidden" id="update-project-name">
+                    
+                    <!-- Tab Buttons for Edit -->
+                    <div class="tabs">
+                        <button type="button" class="tab-btn active" id="btn-update-file" onclick="setUpdateMode('file')"><i class="ti ti-file-upload"></i> Upload</button>
+                        <button type="button" class="tab-btn" id="btn-update-code" onclick="setUpdateMode('code')"><i class="ti ti-code"></i> Paste</button>
+                    </div>
+
+                    <!-- Update File Zone -->
+                    <div id="update-file-zone">
+                        <div class="upload-zone" style="padding: 20px;">
+                            <i class="ti ti-upload" id="update-icon" style="font-size: 24px; margin-bottom: 5px;"></i>
+                            <p class="upload-text" id="update-text" style="font-size: 14px;">Select New HTML File</p>
+                            <input type="file" id="update-file" accept=".html,.htm" onchange="updateUploadUI(this, 'update-text', 'update-icon')">
+                        </div>
+                    </div>
+
+                    <!-- Update Code Zone -->
+                    <div id="update-code-zone" style="display: none;">
+                        <textarea id="update-code" class="clay-textarea" placeholder="Paste your updated HTML code here..."></textarea>
+                    </div>
+
+                    <button type="submit" id="update-btn" class="auth-btn">Update Project</button>
+                </form>
+            </div>
+            <button onclick="closeEditModal()" class="auth-btn" style="color: var(--text-muted); box-shadow:none;">Close</button>
+        </div>
+    </div>
+
+    <!-- Main Logic Script -->
+    <script>
+        const API_BASE = "https://ffx.qd.je";
+
+        const esc = t => String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        const safeUrl = (u, fb) => { try { const x = new URL(String(u).trim()); return (x.protocol === 'https:' || x.protocol === 'http:') ? x.href : fb; } catch (e) { return fb; } };
+
+        const fetchAPI = async (endpoint, options = {}) => {
+            options.credentials = 'include';
+            try { return await fetch(API_BASE + endpoint, options); } 
+            catch (err) { console.error('Fetch error:', err); throw err; }
+        };
+
+        // State for modes
+        let currentDeployMode = 'file';
+        let currentUpdateMode = 'file';
+
+        function setDeployMode(mode) {
+            currentDeployMode = mode;
+            if (mode === 'file') {
+                document.getElementById('btn-deploy-file').classList.add('active');
+                document.getElementById('btn-deploy-code').classList.remove('active');
+                document.getElementById('deploy-file-zone').style.display = 'block';
+                document.getElementById('deploy-code-zone').style.display = 'none';
+            } else {
+                document.getElementById('btn-deploy-code').classList.add('active');
+                document.getElementById('btn-deploy-file').classList.remove('active');
+                document.getElementById('deploy-code-zone').style.display = 'block';
+                document.getElementById('deploy-file-zone').style.display = 'none';
+            }
+        }
+
+        function setUpdateMode(mode) {
+            currentUpdateMode = mode;
+            if (mode === 'file') {
+                document.getElementById('btn-update-file').classList.add('active');
+                document.getElementById('btn-update-code').classList.remove('active');
+                document.getElementById('update-file-zone').style.display = 'block';
+                document.getElementById('update-code-zone').style.display = 'none';
+            } else {
+                document.getElementById('btn-update-code').classList.add('active');
+                document.getElementById('btn-update-file').classList.remove('active');
+                document.getElementById('update-code-zone').style.display = 'block';
+                document.getElementById('update-file-zone').style.display = 'none';
+            }
+        }
+
+        // Initialize dashboard
+        async function initDashboard() {
+            document.getElementById('dashboard-view').style.display = 'block';
+            try {
+                const res = await fetchAPI('/api/user');
+                if (res.ok) {
+                    const data = await res.json();
+                    renderProjects(data.projects);
+                } else {
+                    renderProjects([]);
+                }
+            } catch (e) {
+                renderProjects([]);
+            }
+            document.getElementById('loader').style.display = 'none';
+        }
+
+        function showError(msg, type = 'error') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            const icon = type === 'error' ? 'ti-alert-circle' : 'ti-check';
+            toast.innerHTML = `<i class="ti ${icon}"></i> <span>${msg}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        async function handleUpload(e) {
+            e.preventDefault();
+            const name = document.getElementById('up-name').value;
+            let fileToUpload;
+
+            if (currentDeployMode === 'file') {
+                fileToUpload = document.getElementById('up-file').files[0];
+                if (!fileToUpload || !/\.html?$/i.test(fileToUpload.name)) { showError('Only HTML files allowed.'); return; }
+            } else {
+                const codeString = document.getElementById('up-code').value;
+                if (!codeString.trim()) { showError('Please paste some HTML code.'); return; }
+                const blob = new Blob([codeString], { type: 'text/html' });
+                fileToUpload = new File([blob], name + '.html', { type: 'text/html' });
+            }
+
+            const btn = document.getElementById('up-btn');
+            btn.innerHTML = '<i class="ti ti-loader-2 ti-spin"></i> Deploying...';
+            btn.disabled = true;
+            document.getElementById('loader').style.display = 'flex';
+
+            const formData = new FormData();
+            formData.append('siteName', name);
+            formData.append('siteFile', fileToUpload);
+            formData.append('enableSecurity', 'yes');
+            formData.append('isUpdate', 'false');
+
+            try {
+                const res = await fetchAPI('/upload', { method: 'POST', body: formData });
+                if (res.ok) {
+                    showError('Deployed Successfully!', 'success');
+                    document.getElementById('upload-form').reset();
+                    document.getElementById('up-code').value = '';
+                    updateUploadUI(document.getElementById('up-file'), 'deploy-text', 'deploy-icon');
+                    setTimeout(() => initDashboard(), 1500);
+                } else { showError(await res.text()); document.getElementById('loader').style.display = 'none'; }
+            } catch (err) { showError('Upload failed.'); document.getElementById('loader').style.display = 'none'; } 
+            finally { btn.innerHTML = '<i class="ti ti-rocket"></i> Deploy Project'; btn.disabled = false; }
+        }
+
+        function renderProjects(projects) {
+            const list = document.getElementById('projects-list');
+            document.getElementById('proj-count').textContent = projects ? projects.length : 0;
+            
+            if (!projects || projects.length === 0) {
+                list.innerHTML = '<div style="text-align:center; padding: 20px; color: var(--text-muted); font-weight: 500;">No projects deployed yet.</div>';
+                return;
+            }
+
+            list.innerHTML = '';
+            projects.forEach(p => {
+                const pName = typeof p === 'string' ? p : p.name;
+                const pUrl = safeUrl((typeof p !== 'string' && p.url) ? p.url : `https://${pName}.ffx.qd.je`, '#');
+                const projectDataStr = encodeURIComponent(JSON.stringify({ name: pName })).replace(/'/g, '%27');
+                const pNameAttr = encodeURIComponent(pName).replace(/'/g, '%27');
+
+                const item = document.createElement('div');
+                item.className = 'project-item';
+                item.innerHTML = `
+                    <div class="project-info">
+                        <h4>${esc(pName)}</h4>
+                        <p><a href="${esc(pUrl)}" target="_blank">${esc(pUrl.replace('https://', ''))}</a></p>
+                    </div>
+                    <div class="project-actions">
+                        <a href="${esc(pUrl)}" target="_blank" class="icon-btn"><i class="ti ti-external-link"></i></a>
+                        <button onclick="openEditModal('${projectDataStr}')" class="icon-btn"><i class="ti ti-pencil"></i></button>
+                        <button onclick="deleteProject(decodeURIComponent('${pNameAttr}'))" class="icon-btn danger"><i class="ti ti-trash"></i></button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        let projectToDelete = null;
+        function deleteProject(name) {
+            projectToDelete = name;
+            document.getElementById('delete-project-name-display').innerText = name;
+            document.getElementById('delete-modal').classList.add('active');
+        }
+        function closeDeleteModal() { document.getElementById('delete-modal').classList.remove('active'); projectToDelete = null; }
+
+        async function executeDeleteProject() {
+            if (!projectToDelete) return;
+            const btn = document.getElementById('confirm-delete-btn');
+            btn.innerHTML = '<i class="ti ti-loader-2 ti-spin"></i>'; btn.disabled = true;
+
+            try {
+                const res = await fetchAPI('/api/delete', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ siteName: projectToDelete })
+                });
+                if (res.ok) { closeDeleteModal(); initDashboard(); } 
+                else { showError('Failed to delete.'); closeDeleteModal(); }
+            } catch(e) { showError('Error connecting to server.'); closeDeleteModal(); } 
+            finally { btn.innerHTML = 'Delete'; btn.disabled = false; }
+        }
+
+        function openEditModal(dataStr) {
+            const data = JSON.parse(decodeURIComponent(dataStr));
+            document.getElementById('edit-project-name-display').innerText = data.name;
+            document.getElementById('rename-old-name').value = data.name;
+            document.getElementById('rename-new-name').value = data.name;
+            document.getElementById('update-project-name').value = data.name;
+            
+            // reset update inputs
+            document.getElementById('update-file').value = '';
+            document.getElementById('update-code').value = '';
+            setUpdateMode('file');
+            updateUploadUI(document.getElementById('update-file'), 'update-text', 'update-icon');
+
+            document.getElementById('edit-modal').classList.add('active');
+        }
+        function closeEditModal() { document.getElementById('edit-modal').classList.remove('active'); }
+
+        async function handleRename(e) {
+            e.preventDefault();
+            const btn = document.getElementById('rename-btn');
+            btn.innerHTML = '<i class="ti ti-loader-2 ti-spin"></i>'; btn.disabled = true;
+            try {
+                const res = await fetchAPI('/api/rename-project', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        oldName: document.getElementById('rename-old-name').value, 
+                        newName: document.getElementById('rename-new-name').value 
+                    })
+                });
+                if (res.ok) { showError('Renamed successfully!', 'success'); closeEditModal(); initDashboard(); } 
+                else { showError(await res.text()); }
+            } catch (err) { showError('Connection error.'); } 
+            finally { btn.innerHTML = '<i class="ti ti-check"></i>'; btn.disabled = false; }
+        }
+
+        async function handleUpdateProject(e) {
+            e.preventDefault();
+            const name = document.getElementById('update-project-name').value;
+            let fileToUpload;
+
+            if (currentUpdateMode === 'file') {
+                fileToUpload = document.getElementById('update-file').files[0];
+                if (!fileToUpload || !/\.html?$/i.test(fileToUpload.name)) { showError('Only HTML files allowed.'); return; }
+            } else {
+                const codeString = document.getElementById('update-code').value;
+                if (!codeString.trim()) { showError('Please paste some HTML code.'); return; }
+                const blob = new Blob([codeString], { type: 'text/html' });
+                fileToUpload = new File([blob], name + '.html', { type: 'text/html' });
+            }
+            
+            const btn = document.getElementById('update-btn');
+            btn.innerHTML = '<i class="ti ti-loader-2 ti-spin"></i>'; btn.disabled = true;
+
+            const fd = new FormData();
+            fd.append('siteName', name);
+            fd.append('siteFile', fileToUpload);
+            fd.append('isUpdate', 'true');
+            fd.append('enableSecurity', 'no');
+
+            try {
+                const res = await fetchAPI('/upload', { method: 'POST', body: fd });
+                if (res.ok) { showError('Updated Successfully!', 'success'); setTimeout(() => { closeEditModal(); initDashboard(); }, 1000); } 
+                else { showError(await res.text()); }
+            } catch (err) { showError('Upload failed.'); } 
+            finally { btn.innerHTML = 'Update Project'; btn.disabled = false; }
+        }
+
+        function updateUploadUI(input, textId, iconId) {
+            const textEl = document.getElementById(textId);
+            const iconEl = document.getElementById(iconId);
+            const f = input.files && input.files[0];
+            if (f && !/\.html?$/i.test(f.name)) { showError('Only HTML files allowed.'); input.value = ''; return; }
+            if (f) {
+                textEl.textContent = f.name;
+                iconEl.className = 'ti ti-check';
+            } else {
+                textEl.textContent = textId === 'deploy-text' ? 'Tap to select HTML File' : 'Select New HTML File';
+                iconEl.className = textId === 'deploy-text' ? 'ti ti-file-code' : 'ti ti-upload';
+            }
+        }
+        
+        // Starts the app directly
+        initDashboard();
+    </script>
+</body>
+</html>
