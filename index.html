@@ -30,17 +30,20 @@
             align-items: center;
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
+        }
+
+        body.has-bar {
             padding-top: 100px;
             align-items: flex-start;
         }
 
         /* Clay Container */
-        .modal-content {
+        .container, .modal-content {
             background: var(--bg-color);
             border-radius: 35px;
             padding: 40px;
             width: 90%;
-            max-width: 440px;
+            max-width: 420px;
             box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
             border: 2px solid rgba(255, 255, 255, 0.4);
             z-index: 10;
@@ -50,6 +53,7 @@
             width: 100%;
             max-width: 800px;
             padding: 30px;
+            box-sizing: border-box;
         }
 
         h2, h3, h4 {
@@ -89,7 +93,7 @@
             z-index: 2;
         }
 
-        input[type="text"], input[type="file"] {
+        input[type="text"], input[type="password"], input[type="file"] {
             width: 100%;
             padding: 16px 20px 16px 50px;
             background: var(--bg-color);
@@ -150,9 +154,7 @@
             align-items: center;
             gap: 8px;
         }
-        .tab-btn:hover {
-            color: var(--primary);
-        }
+        .tab-btn:hover { color: var(--primary); }
         .tab-btn.active {
             color: var(--primary);
             box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light);
@@ -176,20 +178,25 @@
             align-items: center;
             gap: 10px;
         }
-
         .auth-btn:hover {
             box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
             color: #0056b3;
         }
-
         .auth-btn:active {
             box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
             transform: scale(0.98);
         }
+        .auth-btn.danger { color: var(--danger); }
 
-        .auth-btn.danger {
-            color: var(--danger);
+        .toggle-link {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 14px;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-weight: 500;
         }
+        .toggle-link span { color: var(--primary); font-weight: 600; }
 
         /* Panels & Dashboard */
         .panel {
@@ -233,11 +240,9 @@
             transition: all 0.2s;
             text-decoration: none;
         }
-
         .icon-btn:active {
             box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
         }
-        
         .icon-btn.danger { color: var(--danger); }
 
         /* Profile Bar (Top) */
@@ -254,9 +259,9 @@
             align-items: center;
             gap: 15px;
             z-index: 50;
+            cursor: pointer;
             border: 2px solid rgba(255,255,255,0.4);
         }
-
         .pf-bar-avatar {
             width: 40px; height: 40px;
             border-radius: 50%;
@@ -265,7 +270,6 @@
             padding: 4px;
         }
         .pf-bar-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-        
         .pf-bar-text h2 { margin: 0; font-size: 16px; color: var(--text-main); }
         .pf-bar-text span { font-size: 12px; color: var(--text-muted); }
 
@@ -342,12 +346,65 @@
     <div id="loader">
         <div style="text-align: center;">
             <div class="spinner"></div>
-            <div id="loader-text" style="font-size: 16px; color: var(--text-main); font-weight: 600;">Loading Workspace...</div>
+            <div id="loader-text" style="font-size: 16px; color: var(--text-main); font-weight: 600;">Connecting...</div>
+        </div>
+    </div>
+
+    <!-- Auth View (Login & Register) -->
+    <div class="container" id="auth-view" style="display: none;">
+        <div id="login-form">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <div class="header-icon"><i class="ti ti-brand-apple"></i></div>
+                <h2>Welcome Back</h2>
+                <p style="color: var(--text-muted); font-size: 15px;">Login to your workspace</p>
+            </div>
+
+            <form id="form-login" onsubmit="handleAuth(event, '/login')">
+                <div class="animated-field">
+                    <i class="ti ti-user icon"></i>
+                    <input type="text" id="log-user" required placeholder="Username">
+                </div>
+                
+                <div class="animated-field">
+                    <i class="ti ti-lock icon"></i>
+                    <input type="password" id="log-pass" required placeholder="Password">
+                </div>
+                
+                <button type="submit" class="auth-btn">
+                    Login
+                </button>
+            </form>
+            <div class="toggle-link" onclick="toggleAuth()">Don't have an account? <span>Sign up</span></div>
+        </div>
+
+        <div id="register-form" style="display: none;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <div class="header-icon"><i class="ti ti-user-plus"></i></div>
+                <h2>Create Account</h2>
+                <p style="color: var(--text-muted); font-size: 15px;">Start your journey here</p>
+            </div>
+
+            <form id="form-register" onsubmit="handleAuth(event, '/register')">
+                <div class="animated-field">
+                    <i class="ti ti-user icon"></i>
+                    <input type="text" id="reg-user" required placeholder="Choose Username">
+                </div>
+                
+                <div class="animated-field">
+                    <i class="ti ti-lock icon"></i>
+                    <input type="password" id="reg-pass" required placeholder="Choose Password">
+                </div>
+                
+                <button type="submit" class="auth-btn">
+                    Create Account
+                </button>
+            </form>
+            <div class="toggle-link" onclick="toggleAuth()">Already have an account? <span>Login</span></div>
         </div>
     </div>
 
     <!-- Header Bar -->
-    <div class="pf-bar" id="pf-bar">
+    <div class="pf-bar" id="pf-bar" style="display:none;" onclick="openProfileModal()">
         <div class="pf-bar-avatar">
             <img src="https://i.postimg.cc/mDsYhTfq/file-000000004ce88211aeb6ad425a8676b1.png" alt="Profile">
         </div>
@@ -404,6 +461,19 @@ Example:
             <h3><i class="ti ti-folder"></i> My Projects (<span id="proj-count">0</span>)</h3>
             <div id="projects-list">
                 <!-- Projects injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal-overlay" id="profile-modal" onclick="if(event.target===this)closeProfileModal()">
+        <div class="modal-content" style="text-align:center;">
+            <div class="header-icon"><i class="ti ti-user"></i></div>
+            <h3>Tasin</h3>
+            <p style="color:var(--text-muted); margin-bottom: 25px;">Logged in as: <span id="user-display" style="font-weight: 600; color:var(--text-main);"></span></p>
+            <div style="display: flex; gap: 15px;">
+                <button onclick="closeProfileModal()" class="auth-btn" style="color: var(--text-main);">Close</button>
+                <button onclick="logout()" class="auth-btn danger">Logout</button>
             </div>
         </div>
     </div>
@@ -479,6 +549,85 @@ Example:
             catch (err) { console.error('Fetch error:', err); throw err; }
         };
 
+        async function checkSession() {
+            try {
+                const res = await fetchAPI('/api/user');
+                if (res.ok) {
+                    const data = await res.json();
+                    document.getElementById('user-display').innerText = '@' + data.username;
+                    renderProjects(data.projects);
+                    showView('dashboard-view');
+                } else {
+                    showView('auth-view');
+                }
+            } catch (e) {
+                showView('auth-view');
+            }
+            document.getElementById('loader').style.display = 'none';
+        }
+
+        function showView(viewId) {
+            document.getElementById('auth-view').style.display = 'none';
+            document.getElementById('dashboard-view').style.display = 'none';
+            document.getElementById(viewId).style.display = 'block';
+            
+            const pfBar = document.getElementById('pf-bar');
+            if (pfBar) pfBar.style.display = viewId === 'dashboard-view' ? 'flex' : 'none';
+            document.body.classList.toggle('has-bar', viewId === 'dashboard-view');
+        }
+
+        function toggleAuth() {
+            const loginForm = document.getElementById('login-form');
+            const regForm = document.getElementById('register-form');
+            if (loginForm.style.display === 'none') {
+                loginForm.style.display = 'block'; regForm.style.display = 'none';
+            } else {
+                loginForm.style.display = 'none'; regForm.style.display = 'block';
+            }
+        }
+
+        async function handleAuth(e, endpoint) {
+            e.preventDefault();
+            const isLogin = endpoint === '/login';
+            const user = document.getElementById(isLogin ? 'log-user' : 'reg-user').value;
+            const pass = document.getElementById(isLogin ? 'log-pass' : 'reg-pass').value;
+
+            const btn = e.target.querySelector('button');
+            const oldText = btn.innerHTML;
+            btn.innerHTML = '<i class="ti ti-loader-2 ti-spin"></i>';
+            btn.disabled = true;
+
+            try {
+                const res = await fetchAPI(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: user, password: pass, remember: 'yes' })
+                });
+
+                if (res.ok) {
+                    if (isLogin) { checkSession(); } 
+                    else {
+                        showError('Account created successfully!', 'success');
+                        setTimeout(() => { toggleAuth(); }, 1500);
+                    }
+                } else {
+                    const text = await res.text();
+                    showError(text);
+                }
+            } catch (err) { showError('Connection failed.'); } 
+            finally { btn.innerHTML = oldText; btn.disabled = false; }
+        }
+
+        async function logout() {
+            closeProfileModal();
+            document.getElementById('loader').style.display = 'flex';
+            await fetchAPI('/logout');
+            checkSession();
+        }
+
+        function openProfileModal() { document.getElementById('profile-modal').classList.add('active'); }
+        function closeProfileModal() { document.getElementById('profile-modal').classList.remove('active'); }
+
         // State for modes
         let currentDeployMode = 'file';
         let currentUpdateMode = 'file';
@@ -511,23 +660,6 @@ Example:
                 document.getElementById('update-code-zone').style.display = 'block';
                 document.getElementById('update-file-zone').style.display = 'none';
             }
-        }
-
-        // Initialize dashboard
-        async function initDashboard() {
-            document.getElementById('dashboard-view').style.display = 'block';
-            try {
-                const res = await fetchAPI('/api/user');
-                if (res.ok) {
-                    const data = await res.json();
-                    renderProjects(data.projects);
-                } else {
-                    renderProjects([]);
-                }
-            } catch (e) {
-                renderProjects([]);
-            }
-            document.getElementById('loader').style.display = 'none';
         }
 
         function showError(msg, type = 'error') {
@@ -577,7 +709,7 @@ Example:
                     document.getElementById('upload-form').reset();
                     document.getElementById('up-code').value = '';
                     updateUploadUI(document.getElementById('up-file'), 'deploy-text', 'deploy-icon');
-                    setTimeout(() => initDashboard(), 1500);
+                    setTimeout(() => checkSession(), 1500);
                 } else { showError(await res.text()); document.getElementById('loader').style.display = 'none'; }
             } catch (err) { showError('Upload failed.'); document.getElementById('loader').style.display = 'none'; } 
             finally { btn.innerHTML = '<i class="ti ti-rocket"></i> Deploy Project'; btn.disabled = false; }
@@ -634,7 +766,7 @@ Example:
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ siteName: projectToDelete })
                 });
-                if (res.ok) { closeDeleteModal(); initDashboard(); } 
+                if (res.ok) { closeDeleteModal(); checkSession(); } 
                 else { showError('Failed to delete.'); closeDeleteModal(); }
             } catch(e) { showError('Error connecting to server.'); closeDeleteModal(); } 
             finally { btn.innerHTML = 'Delete'; btn.disabled = false; }
@@ -669,7 +801,7 @@ Example:
                         newName: document.getElementById('rename-new-name').value 
                     })
                 });
-                if (res.ok) { showError('Renamed successfully!', 'success'); closeEditModal(); initDashboard(); } 
+                if (res.ok) { showError('Renamed successfully!', 'success'); closeEditModal(); checkSession(); } 
                 else { showError(await res.text()); }
             } catch (err) { showError('Connection error.'); } 
             finally { btn.innerHTML = '<i class="ti ti-check"></i>'; btn.disabled = false; }
@@ -701,7 +833,7 @@ Example:
 
             try {
                 const res = await fetchAPI('/upload', { method: 'POST', body: fd });
-                if (res.ok) { showError('Updated Successfully!', 'success'); setTimeout(() => { closeEditModal(); initDashboard(); }, 1000); } 
+                if (res.ok) { showError('Updated Successfully!', 'success'); setTimeout(() => { closeEditModal(); checkSession(); }, 1000); } 
                 else { showError(await res.text()); }
             } catch (err) { showError('Upload failed.'); } 
             finally { btn.innerHTML = 'Update Project'; btn.disabled = false; }
@@ -721,8 +853,8 @@ Example:
             }
         }
         
-        // Starts the app directly
-        initDashboard();
+        // Starts the app checking session
+        checkSession();
     </script>
 </body>
 </html>
